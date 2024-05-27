@@ -1,0 +1,39 @@
+﻿@model IEnumerable<CLOUD_POE_Part2.Models.Product>
+
+@{
+    ViewData["Title"] = "Index";
+}
+
+<h1>Products</h1>
+
+<p>
+    <a asp-action="Create">Create New</a>
+</p>
+
+<div class="row">
+    @foreach (var item in Model)
+    {
+        <div class="col-md-4 mb-4">
+            <div class="card">
+                <img src="@item.ProductImageUrl" class="card-img-top" alt="Product Image">
+                <div class="card-body">
+                    <h5 class="card-title">@item.ProductName</h5>
+                    <h6 class="card-subtitle mb-2 text-muted">@item.ProductCategory</h6>
+                    <p class="card-text">Price: $@item.ProductPrice</p>
+                    <!-- Remove displaying Admin ID -->
+                    <a href="@Url.Action("Details", "Product", new { id = item.ProductID })" class="btn btn-primary">Details</a>
+                    <a href="@Url.Action("Edit", "Product", new { id = item.ProductID })" class="btn btn-secondary">Edit</a>
+                    <a href="@Url.Action("Delete", "Product", new { id = item.ProductID })" class="btn btn-danger">Delete</a>
+
+                    <!-- Add button to add to list -->
+                    <button class="btn btn-success add-to-list" data-product-id="@item.ProductID">Add to List</button>
+                </div>
+            </div>
+        </div>
+    }
+</div>
+
+<p>
+    <a asp-controller="Order" asp-action="OrderItems" class="btn btn-primary">View Order Items</a>
+</p>
+
