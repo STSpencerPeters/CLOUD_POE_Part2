@@ -1,0 +1,38 @@
+﻿@model IEnumerable<OrderItem>
+
+@{
+    ViewData["Title"] = "Order Items";
+}
+
+<h1>Order Items</h1>
+
+<table class="table">
+    <thead>
+        <tr>
+            <th>Product Name</th>
+            <th>Quantity</th>
+            <th>Price</th>
+        </tr>
+    </thead>
+    <tbody>
+        @foreach (var item in Model)
+        {
+            <tr>
+                <td>@item.ProductName</td>
+                <td>@item.Quantity</td>
+                <td>@item.Price</td>
+            </tr>
+        }
+    </tbody>
+</table>
+
+<form asp-action="ProcessOrder" method="post">
+    <label for="action">Select Action:</label>
+    <select id="action" name="action">
+        <option value="confirm">Confirm Order and Clear List</option>
+        <option value="add">Add New Products</option>
+    </select>
+    <button type="submit" class="btn btn-primary">Submit</button>
+</form>
+
+

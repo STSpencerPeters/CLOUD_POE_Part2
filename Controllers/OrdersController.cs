@@ -167,5 +167,22 @@ namespace CLOUD_POE_Part2.Controllers
         {
             return _context.Orders.Any(e => e.OrderID == id);
         }
+
+        [HttpPost]
+        public async Task<IActionResult> ProcessOrder(string action)
+        {
+            if (action == "confirm")
+            {
+                _context.Product.RemoveRange(_context.Product);
+                await _context.SaveChangesAsync();
+                return RedirectToAction(nameof(Index));
+            }
+            else if (action == "add")
+            {
+                return RedirectToAction(nameof(Index));
+            }
+
+            return RedirectToAction(nameof(Index));
+        }
     }
 }

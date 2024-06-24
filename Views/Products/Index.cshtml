@@ -26,7 +26,10 @@
                     <a href="@Url.Action("Delete", "Product", new { id = item.ProductID })" class="btn btn-danger">Delete</a>
 
                     <!-- Add button to add to list -->
-                    <button class="btn btn-success add-to-list" data-product-id="@item.ProductID">Add to List</button>
+                    <form asp-controller="Order" asp-action="AddToOrder" method="post">
+                        <input type="hidden" name="productId" value="@item.ProductID" />
+                        <button type="submit" class="btn btn-success">Add to List</button>
+                    </form>
                 </div>
             </div>
         </div>
@@ -36,4 +39,5 @@
 <p>
     <a asp-controller="Order" asp-action="OrderItems" class="btn btn-primary">View Order Items</a>
 </p>
+
 

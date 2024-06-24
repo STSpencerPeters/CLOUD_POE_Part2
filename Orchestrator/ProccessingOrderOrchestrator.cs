@@ -12,11 +12,10 @@ namespace CLOUD_POE_Part2.Orchestrator
         [FunctionName("ProccessingOrderOrchestrator")]
         
         public static async Task RunOrchestrator(
-            [OrchestrationTrigger] IDurableOrchestrationContext context, ILogger log)
+            [OrchestrationTrigger] IDurableOrchestrationContext context)
         {
             var orderItem = context.GetInput<OrderItem>();
 
-            log.LogInformation($"Starting order processing for order ID: {orderItem.OrderID}");
 
             //Updating the database
 
@@ -25,10 +24,6 @@ namespace CLOUD_POE_Part2.Orchestrator
             //Send Order Confirmation
             await context.CallActivityAsync("OrderConfirmation", orderItem.OrderID);
 
-            //Send Notificaion
-            await context.CallActivityAsync("NotificationOrchestra", orderItem.OrderID);
-
-            log.LogInformation($"Ordering process complete for order ID: {orderItem.OrderID}");
         }
     }
 }
