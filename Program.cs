@@ -13,7 +13,7 @@ namespace CLOUD_POE_Part2
 
             // Configure the database context
             builder.Services.AddDbContext<SystemDbContext>(options =>
-                options.UseSqlServer(builder.Configuration.GetConnectionString("DefualtConnection")
+                options.UseSqlServer(builder.Configuration.GetConnectionString("SystemDbContext")
                     ?? throw new InvalidOperationException("Connection string 'SystemDbContext' not found.")));
 
             // Configure identity services with roles
@@ -23,6 +23,7 @@ namespace CLOUD_POE_Part2
 
             // Add services to the container
             builder.Services.AddControllersWithViews();
+            builder.Services.AddHttpClient();
 
             var app = builder.Build();
 

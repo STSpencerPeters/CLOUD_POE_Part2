@@ -7,16 +7,19 @@ using Microsoft.AspNetCore.Mvc.Rendering;
 using Microsoft.EntityFrameworkCore;
 using CLOUD_POE_Part2.Data;
 using CLOUD_POE_Part2.Models;
+using Microsoft.Azure.WebJobs.Extensions.DurableTask;
 
 namespace CLOUD_POE_Part2.Controllers
 {
     public class OrdersController : Controller
     {
         private readonly SystemDbContext _context;
+        private readonly IDurableOrchestrationClient _durableClient;
 
-        public OrdersController(SystemDbContext context)
+        public OrdersController(SystemDbContext context, IDurableOrchestrationClient durableClient)
         {
             _context = context;
+            _durableClient = durableClient;
         }
 
         // GET: Orders
@@ -63,6 +66,10 @@ namespace CLOUD_POE_Part2.Controllers
             {
                 _context.Add(order);
                 await _context.SaveChangesAsync();
+
+                // Start the order processing workflow
+                await _durableClient.StartNewAsync("OrderProcessingOrchestrator", order.OrderID);
+
                 return RedirectToAction(nameof(Index));
             }
             ViewData["CustomerID"] = new SelectList(_context.Customer, "CustomerID", "CustomerID", order.CustomerID);

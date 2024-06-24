@@ -5,7 +5,7 @@ using Microsoft.EntityFrameworkCore;
 
 namespace CLOUD_POE_Part2.Data
 {
-    public class SystemDbContext : IdentityDbContext<IdentityUser>
+    public class SystemDbContext : DbContext
     {
         public SystemDbContext(DbContextOptions<SystemDbContext> options) : base(options) { }
 
@@ -30,6 +30,23 @@ namespace CLOUD_POE_Part2.Data
                 .WithMany()
                 .HasForeignKey(o => o.CustomerID)
                 .OnDelete(DeleteBehavior.Restrict);
+
+            // Configure OrderItem
+            modelBuilder.Entity<OrderItem>()
+                .HasKey(oi => oi.OrderItemID); // Assuming OrderItemID is the primary key
+
+            modelBuilder.Entity<OrderItem>()
+                .HasOne(oi => oi.Order)
+                .WithMany(o => o.OrderItems)
+                .HasForeignKey(oi => oi.OrderID)
+                .OnDelete(DeleteBehavior.Cascade); // Adjust the delete behavior as needed
+
+            modelBuilder.Entity<OrderItem>()
+                .HasOne(oi => oi.Product)
+                .WithMany()
+                .HasForeignKey(oi => oi.ProductID)
+                .OnDelete(DeleteBehavior.Restrict);
+
         }
     }
 

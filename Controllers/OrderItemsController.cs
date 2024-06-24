@@ -7,16 +7,22 @@ using Microsoft.AspNetCore.Mvc.Rendering;
 using Microsoft.EntityFrameworkCore;
 using CLOUD_POE_Part2.Data;
 using CLOUD_POE_Part2.Models;
+using Microsoft.Azure.WebJobs.Extensions.DurableTask;
 
 namespace CLOUD_POE_Part2.Controllers
 {
     public class OrderItemsController : Controller
     {
         private readonly SystemDbContext _context;
+        private readonly IDurableOrchestrationClient _durableClient;
+        private readonly ILogger _logger;
 
-        public OrderItemsController(SystemDbContext context)
+
+        public OrderItemsController(SystemDbContext context, IDurableOrchestrationClient durableClient, ILogger<OrderItemsController> logger)
         {
             _context = context;
+            _durableClient = durableClient;
+            _logger = logger;
         }
 
         // GET: OrderItems
@@ -106,21 +112,17 @@ namespace CLOUD_POE_Part2.Controllers
             {
                 try
                 {
-                    _context.Update(orderItem);
-                    await _context.SaveChangesAsync();
+                    // Start the orchestrator function
+                    var instanceId = await _durableClient.StartNewAsync("ProcessingOrderOrchestrator", orderItem);
+
+                    _logger.LogInformation($"Started orchestration with ID = '{instanceId}'.");
+
+                    return RedirectToAction(nameof(Index));
                 }
-                catch (DbUpdateConcurrencyException)
+                catch (Exception ex)
                 {
-                    if (!OrderItemExists(orderItem.OrderItemID))
-                    {
-                        return NotFound();
-                    }
-                    else
-                    {
-                        throw;
-                    }
+                    _logger.LogError(ex, "Error starting durable function.");
                 }
-                return RedirectToAction(nameof(Index));
             }
             ViewData["OrderID"] = new SelectList(_context.Orders, "OrderID", "OrderID", orderItem.OrderID);
             ViewData["ProductID"] = new SelectList(_context.Product, "ProductID", "ProductID", orderItem.ProductID);

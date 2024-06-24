@@ -33,8 +33,7 @@ namespace CLOUD_POE_Part2.Controllers
                 return NotFound();
             }
 
-            var admin = await _context.Admin
-                .FirstOrDefaultAsync(m => m.Id == id);
+            var admin = await _context.Admin.FirstOrDefaultAsync(m => m.Id == id);
             if (admin == null)
             {
                 return NotFound();

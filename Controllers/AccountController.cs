@@ -23,21 +23,11 @@ public class AccountController : Controller
         if (ModelState.IsValid)
         {
             // Create a new IdentityUser
-            var user = new IdentityUser { UserName = model.Username };
+            var user = new Customer { UserName = model.Username };
             var result = await _userManager.CreateAsync(user, model.Password);
 
             if (result.Succeeded)
             {
-                // Create a new Customer model
-                var customer = new Customer
-                {
-                    CustomerUsername = model.Username,
-                    CustiomerPassword = model.Password
-                };
-
-                // Add customer to the database
-                _context.Customer.Add(customer);
-                await _context.SaveChangesAsync();
 
                 // Sign in the user after successful registration
                 await _signInManager.SignInAsync(user, isPersistent: false);
